@@ -23,7 +23,7 @@ const audioNextBtn = document.getElementById('audioNextBtn');
 const progressBar = document.getElementById('progressBar');
 const currentTimeEl = document.getElementById('currentTime');
 const durationEl = document.getElementById('duration');
-const reciterSelect = document.getElementById('reciterSelect');
+const reciterBtns = document.querySelectorAll('.reciter-btn');
 
 let repeatEnabled = false;
 let autoplayPending = false;
@@ -48,9 +48,9 @@ const reciters = {
 };
 
 function setAudioSource(number, surahName = '', shouldAutoplay = false) {
-  const reciter = reciters[reciterSelect.value] ? reciterSelect.value : 'ar.alafasy';
+  const activeBtn = document.querySelector('.reciter-btn.active');
+  const reciter = activeBtn?.dataset.reciter || 'ar.alafasy';
   const reciterDetails = reciters[reciter];
-  reciterSelect.value = reciter;
   audioPlayer.pause();
   autoplayPending = shouldAutoplay;
   const surahFile = String(number).padStart(3, '0');
@@ -296,9 +296,13 @@ audioPlayer.addEventListener('error', () => {
 
 searchInput.addEventListener('input', renderSurahList);
 
-reciterSelect.addEventListener('change', () => {
-  const selectedSurah = state.surahs.find((surah) => surah.number === state.selected);
-  setAudioSource(state.selected, selectedSurah?.name || '', true);
+reciterBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    reciterBtns.forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    const selectedSurah = state.surahs.find((surah) => surah.number === state.selected);
+    setAudioSource(state.selected, selectedSurah?.name || '', true);
+  });
 });
 
 loadSurahs();

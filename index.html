@@ -59,21 +59,21 @@
             <span class="record-pin"></span>
           </div>
           <div class="player-card">
-            <div class="player-heading">
-              <div>
+            <div class="player-info">
+              <div class="info-content">
                 <p class="audio-label">Quran Recitation</p>
                 <h3 id="audioTitle">الشيخ مشاري العفاسي</h3>
                 <p id="audioStatus" class="audio-status">Select a surah to listen.</p>
               </div>
-              <label class="reciter-picker" for="reciterSelect">
+              <div class="reciter-picker">
                 <span>Reciter</span>
-                <select id="reciterSelect" aria-label="Choose reciter">
-                  <option value="ar.alafasy">الشيخ مشاري العفاسي</option>
-                  <option value="ar.abdulsamad">الشيخ عبد الباسط عبد الصمد</option>
-                  <option value="ar.husary">الشيخ الحصري</option>
-                  <option value="ar.minshawi">الشيخ المنشاوي</option>
-                </select>
-              </label>
+                <div class="reciter-buttons" role="group" aria-label="Choose reciter">
+                  <button class="reciter-btn active" type="button" data-reciter="ar.alafasy" title="الشيخ مشاري العفاسي">العفاسي</button>
+                  <button class="reciter-btn" type="button" data-reciter="ar.abdulsamad" title="الشيخ عبد الباسط عبد الصمد">عبدالباسط</button>
+                  <button class="reciter-btn" type="button" data-reciter="ar.husary" title="الشيخ الحصري">الحصري</button>
+                  <button class="reciter-btn" type="button" data-reciter="ar.minshawi" title="الشيخ المنشاوي">المنشاوي</button>
+                </div>
+              </div>
             </div>
             <div class="timeline">
               <span id="currentTime">0:00</span>
