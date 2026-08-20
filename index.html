@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quran</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div>
+            <p class="eyebrow">Sacred Text</p>
+            <h1>Quran قران</h1>
+          </div>
+          <p class="subtitle">Browse all 114 surahs in one place.</p>
+          <label class="search-box" for="searchInput">
+            <span>🔎</span>
+            <input id="searchInput" type="text" placeholder="Search surah" />
+          </label>
+        </div>
+        <div id="surahList" class="surah-list" aria-live="polite"></div>
+      </aside>
+
+      <main class="content">
+        <header class="content-header">
+          <div>
+            <p id="surahBadge" class="badge">Loading...</p>
+            <h2 id="surahTitle">Quran Surah Reader</h2>
+            <p id="surahMeta" class="meta">Choose a surah to begin reading.</p>
+          </div>
+          <div class="content-actions">
+            <button id="prevBtn" class="ghost-btn" type="button">◀ Previous</button>
+            <button id="nextBtn" class="ghost-btn" type="button">Next ▶</button>
+          </div>
+        </header>
+
+        <section class="audio-panel" aria-label="Surah recitation">
+          <div class="record-stage" aria-hidden="true">
+            <div class="record">
+              <svg viewBox="0 0 128 128" role="presentation">
+                <rect width="128" height="128" fill="#10131d"></rect>
+                <circle cx="20" cy="20" r="2" fill="#fff"></circle>
+                <circle cx="40" cy="30" r="2" fill="#fff"></circle>
+                <circle cx="60" cy="10" r="2" fill="#fff"></circle>
+                <circle cx="80" cy="40" r="2" fill="#fff"></circle>
+                <circle cx="100" cy="20" r="2" fill="#fff"></circle>
+                <circle cx="120" cy="50" r="2" fill="#fff"></circle>
+                <circle cx="90" cy="30" r="10" fill="#fff" fill-opacity=".45"></circle>
+                <circle cx="90" cy="30" r="8" fill="#fff"></circle>
+                <path d="M0 128 Q32 64 64 128 T128 128" fill="#247d7a"></path>
+                <path d="M0 128 Q32 48 64 128 T128 128" fill="#48b2a5"></path>
+                <path d="M0 128 Q32 32 64 128 T128 128" fill="#86d2c1"></path>
+                <path d="M0 128 Q16 64 32 128 T64 128" fill="#247d7a"></path>
+                <path d="M64 128 Q80 64 96 128 T128 128" fill="#48b2a5"></path>
+              </svg>
+            </div>
+            <span class="record-pin"></span>
+          </div>
+          <div class="player-card">
+            <div class="player-heading">
+              <div>
+                <p class="audio-label">Quran Recitation</p>
+                <h3 id="audioTitle">Sheikh Mishary Alafasy</h3>
+                <p id="audioStatus" class="audio-status">Select a surah to listen.</p>
+              </div>
+              <label class="reciter-picker" for="reciterSelect">
+                <span>Reciter</span>
+                <select id="reciterSelect" aria-label="Choose reciter">
+                  <option value="ar.alafasy">Mishary Alafasy</option>
+                  <option value="ar.abdulsamad">Sheikh Abdul Samad</option>
+                  <option value="ar.husary">Sheikh Al-Husary</option>
+                  <option value="ar.minshawi">Sheikh Al-Minshawi</option>
+                </select>
+              </label>
+            </div>
+            <div class="timeline">
+              <span id="currentTime">0:00</span>
+              <input id="progressBar" type="range" min="0" max="100" value="0" aria-label="Audio progress" />
+              <span id="duration">0:00</span>
+            </div>
+            <div class="player-controls">
+              <button id="repeatBtn" class="player-icon" type="button" aria-label="Repeat off" title="Repeat off">↻</button>
+              <button id="audioPrevBtn" class="player-icon" type="button" aria-label="Previous surah" title="Previous surah">|◀</button>
+              <button id="playBtn" class="play-button" type="button" aria-label="Play" title="Play">▶</button>
+              <button id="audioNextBtn" class="player-icon" type="button" aria-label="Next surah" title="Next surah">▶|</button>
+            </div>
+          </div>
+          <audio id="audioPlayer" preload="metadata"></audio>
+        </section>
+
+        <div id="loader" class="loader">Loading surah details...</div>
+        <section id="surahContent" class="surah-content" hidden></section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
