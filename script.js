@@ -26,31 +26,33 @@ const durationEl = document.getElementById('duration');
 const reciterSelect = document.getElementById('reciterSelect');
 
 let repeatEnabled = false;
+let autoplayPending = false;
 
 const reciters = {
   'ar.alafasy': {
-    name: 'Sheikh Mishary Alafasy',
+    name: 'الشيخ مشاري العفاسي',
     source: 'https://server8.mp3quran.net/afs/',
   },
   'ar.abdulsamad': {
-    name: 'Sheikh Abdul Samad',
+    name: 'الشيخ عبد الباسط عبد الصمد',
     source: 'https://server7.mp3quran.net/basit/',
   },
   'ar.husary': {
-    name: 'Sheikh Al-Husary',
+    name: 'الشيخ الحصري',
     source: 'https://server13.mp3quran.net/husr/',
   },
   'ar.minshawi': {
-    name: 'Sheikh Al-Minshawi',
+    name: 'الشيخ المنشاوي',
     source: 'https://server10.mp3quran.net/minsh/',
   },
 };
 
-function setAudioSource(number, surahName = '') {
+function setAudioSource(number, surahName = '', shouldAutoplay = false) {
   const reciter = reciters[reciterSelect.value] ? reciterSelect.value : 'ar.alafasy';
   const reciterDetails = reciters[reciter];
   reciterSelect.value = reciter;
   audioPlayer.pause();
+  autoplayPending = shouldAutoplay;
   const surahFile = String(number).padStart(3, '0');
   audioPlayer.src = `${reciterDetails.source}${surahFile}.mp3`;
   audioPlayer.load();
@@ -97,11 +99,11 @@ async function togglePlayback() {
   updatePlayButton();
 }
 
-function setSelected(number) {
+function setSelected(number, shouldAutoplay = false) {
   state.selected = number;
   history.replaceState(null, '', `#${number}`);
   renderSurahList();
-  loadSurah(number);
+  loadSurah(number, shouldAutoplay);
 }
 
 function normalizeText(value) {
@@ -138,8 +140,8 @@ function renderSurahList() {
       const activeClass = surah.number === state.selected ? 'active' : '';
       return `
         <button class="surah-item ${activeClass}" type="button" data-number="${surah.number}">
-          <strong>${surah.number}. ${surah.englishName}</strong>
-          <span>${surah.name}</span>
+          <strong>${surah.number}. ${surah.name}</strong>
+          <span>${surah.englishName}</span>
         </button>
       `;
     })
@@ -167,7 +169,7 @@ async function loadSurahs() {
   }
 }
 
-async function loadSurah(number) {
+async function loadSurah(number, shouldAutoplay = false) {
   loader.hidden = false;
   surahContent.hidden = true;
 
@@ -182,9 +184,9 @@ async function loadSurah(number) {
     const surah = surahData.data;
 
     surahBadge.textContent = `Surah ${surah.number}`;
-    surahTitle.textContent = `${surah.number}. ${surah.englishName}`;
+    surahTitle.textContent = `${surah.number}. ${surah.name}`;
     surahMeta.textContent = `${surah.englishNameTranslation} • ${surah.revelationType} • ${surah.ayahs.length} verses`;
-    setAudioSource(surah.number, surah.name);
+    setAudioSource(surah.number, surah.name, shouldAutoplay);
 
     const versesMarkup = surah.ayahs
       .filter((ayah) => {
@@ -221,12 +223,12 @@ async function loadSurah(number) {
 
 prevBtn.addEventListener('click', () => {
   const previous = Math.max(1, state.selected - 1);
-  setSelected(previous);
+  setSelected(previous, true);
 });
 
 nextBtn.addEventListener('click', () => {
   const next = Math.min(114, state.selected + 1);
-  setSelected(next);
+  setSelected(next, true);
 });
 
 playBtn.addEventListener('click', togglePlayback);
@@ -239,11 +241,11 @@ repeatBtn.addEventListener('click', () => {
 });
 
 audioPrevBtn.addEventListener('click', () => {
-  setSelected(Math.max(1, state.selected - 1));
+  setSelected(Math.max(1, state.selected - 1), true);
 });
 
 audioNextBtn.addEventListener('click', () => {
-  setSelected(Math.min(114, state.selected + 1));
+  setSelected(Math.min(114, state.selected + 1), true);
 });
 
 progressBar.addEventListener('input', () => {
@@ -254,6 +256,20 @@ progressBar.addEventListener('input', () => {
 
 audioPlayer.addEventListener('loadedmetadata', () => {
   durationEl.textContent = formatTime(audioPlayer.duration);
+});
+
+audioPlayer.addEventListener('canplay', async () => {
+  if (!autoplayPending) return;
+  autoplayPending = false;
+
+  try {
+    await audioPlayer.play();
+    audioStatus.textContent = 'Playing from CDN.';
+  } catch (error) {
+    audioStatus.textContent = 'Tap play to start the recitation.';
+    console.error(error);
+  }
+  updatePlayButton();
 });
 
 audioPlayer.addEventListener('timeupdate', () => {
@@ -282,7 +298,7 @@ searchInput.addEventListener('input', renderSurahList);
 
 reciterSelect.addEventListener('change', () => {
   const selectedSurah = state.surahs.find((surah) => surah.number === state.selected);
-  setAudioSource(state.selected, selectedSurah?.name || '');
+  setAudioSource(state.selected, selectedSurah?.name || '', true);
 });
 
 loadSurahs();
