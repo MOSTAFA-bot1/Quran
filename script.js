@@ -25,9 +25,25 @@ const currentTimeEl = document.getElementById('currentTime');
 const durationEl = document.getElementById('duration');
 const reciterBtns = document.querySelectorAll('.reciter-btn');
 const volumeLevel = document.getElementById('volumeLevel');
+const themeToggle = document.getElementById('themeToggle');
 
 let repeatEnabled = false;
 let autoplayPending = false;
+
+function applyTheme(isLight) {
+  document.documentElement.dataset.theme = isLight ? 'light' : 'dark';
+  themeToggle.checked = isLight;
+  themeToggle.setAttribute('aria-label', isLight ? 'Use dark mode' : 'Use light mode');
+}
+
+const savedTheme = localStorage.getItem('quran-theme');
+applyTheme(savedTheme === 'light');
+
+themeToggle.addEventListener('change', () => {
+  const isLight = themeToggle.checked;
+  localStorage.setItem('quran-theme', isLight ? 'light' : 'dark');
+  applyTheme(isLight);
+});
 
 const reciters = {
   'ar.alafasy': {

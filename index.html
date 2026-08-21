@@ -32,6 +32,27 @@
             <p id="surahMeta" class="meta">Choose a surah to begin reading.</p>
           </div>
           <div class="content-actions">
+            <label class="cosmic-toggle" title="Toggle light and dark mode">
+              <input id="themeToggle" class="toggle" type="checkbox" aria-label="Use light mode" />
+              <div class="slider">
+                <div class="cosmos"></div>
+                <div class="energy-line"></div>
+                <div class="energy-line"></div>
+                <div class="energy-line"></div>
+                <div class="toggle-orb">
+                  <div class="inner-orb"></div>
+                  <div class="ring"></div>
+                </div>
+                <div class="particles">
+                  <div style="--angle: 30deg" class="particle"></div>
+                  <div style="--angle: 60deg" class="particle"></div>
+                  <div style="--angle: 90deg" class="particle"></div>
+                  <div style="--angle: 120deg" class="particle"></div>
+                  <div style="--angle: 150deg" class="particle"></div>
+                  <div style="--angle: 180deg" class="particle"></div>
+                </div>
+              </div>
+            </label>
             <button id="prevBtn" class="ghost-btn" type="button">◀ Previous</button>
             <button id="nextBtn" class="ghost-btn" type="button">Next ▶</button>
           </div>
@@ -82,7 +103,7 @@
               <span id="duration">0:00</span>
             </div>
             <div class="player-controls">
-              <label class="slider" for="volumeLevel">
+              <label class="volume-slider" for="volumeLevel">
                 <input id="volumeLevel" type="range" class="level" min="0" max="1" step="0.01" value="1" aria-label="Volume" />
                 <svg class="volume" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M18.36 19.36a1 1 0 0 1-.705-1.71C19.167 16.148 20 14.142 20 12s-.833-4.148-2.345-5.65a1 1 0 1 1 1.41-1.419C20.958 6.812 22 9.322 22 12s-1.042 5.188-2.935 7.069a.997.997 0 0 1-.705.291z" fill="currentColor"></path>

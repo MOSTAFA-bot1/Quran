@@ -10,6 +10,18 @@
   --border: rgba(255, 255, 255, 0.08);
 }
 
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #eef7f4;
+  --panel: #ffffff;
+  --panel-2: #e3f0ec;
+  --text: #142b2d;
+  --muted: #5b7372;
+  --accent: #2f9185;
+  --accent-2: #19675f;
+  --border: rgba(20, 43, 45, 0.14);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -17,7 +29,7 @@
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, var(--bg), #11263b 60%, #0a1723);
+  background: linear-gradient(135deg, var(--bg), var(--panel-2) 60%, var(--bg));
   color: var(--text);
   min-height: 100vh;
 }
@@ -34,7 +46,7 @@ input {
 }
 
 .sidebar {
-  background: rgba(9, 20, 34, 0.92);
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
   border-right: 1px solid var(--border);
   padding: 24px 16px;
   display: flex;
@@ -327,7 +339,7 @@ h2 {
   gap: 20px;
 }
 
-.slider {
+.volume-slider {
   --slider-width: 72px;
   --slider-height: 10px;
   --slider-bg: rgba(149, 170, 194, 0.24);
@@ -342,7 +354,7 @@ h2 {
   cursor: pointer;
 }
 
-.slider .volume {
+.volume-slider .volume {
   position: absolute;
   left: 0;
   width: var(--icon-size);
@@ -352,7 +364,7 @@ h2 {
   transition: color 0.5s;
 }
 
-.slider .level {
+.volume-slider .level {
   width: var(--slider-width);
   height: var(--slider-height);
   margin-left: 35px;
@@ -363,26 +375,26 @@ h2 {
   cursor: inherit;
 }
 
-.slider .level::-webkit-slider-thumb {
+.volume-slider .level::-webkit-slider-thumb {
   width: 0;
   height: 0;
   appearance: none;
   box-shadow: -100px 0 5px 100px var(--level-color), -100px 0 20px 100px var(--level-color);
 }
 
-.slider .level::-moz-range-thumb {
+.volume-slider .level::-moz-range-thumb {
   width: 0;
   height: 0;
   border: none;
   box-shadow: -100px 0 5px 100px var(--level-color), -100px 0 20px 100px var(--level-color);
 }
 
-.slider .level:hover ~ .volume {
+.volume-slider .level:hover ~ .volume {
   color: var(--accent-2);
   opacity: 0.6;
 }
 
-.slider .level:focus-visible {
+.volume-slider .level:focus-visible {
   outline: 2px solid var(--accent-2);
   outline-offset: 4px;
 }
@@ -460,6 +472,19 @@ h2 {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
 }
 
+:root[data-theme="light"] .ghost-btn,
+:root[data-theme="light"] .reciter-btn {
+  background: #f6fbfa;
+  border-color: rgba(20, 43, 45, 0.2);
+  color: var(--text);
+}
+
+:root[data-theme="light"] .reciter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 .ghost-btn:focus-visible {
   outline: 2px solid var(--accent-2);
   outline-offset: 3px;
@@ -534,6 +559,114 @@ h2 {
   color: var(--muted);
 }
 
+.cosmic-toggle {
+  position: relative;
+  display: block;
+  flex: 0 0 84px;
+  width: 84px;
+  height: 42px;
+  transform-style: preserve-3d;
+  perspective: 500px;
+}
+
+.cosmic-toggle .toggle {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.cosmic-toggle .slider {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: auto;
+  height: auto;
+  margin: 0;
+  cursor: pointer;
+  background: linear-gradient(45deg, #1a1a2e, #16213e);
+  border-radius: 35px;
+  transition: 0.5s;
+  overflow: hidden;
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.35), inset 0 0 12px rgba(255, 255, 255, 0.05);
+}
+
+.cosmic-toggle .cosmos {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(1px 1px at 10% 10%, #fff 100%, transparent), radial-gradient(2px 2px at 30% 30%, #fff 100%, transparent), radial-gradient(1px 1px at 60% 60%, #fff 100%, transparent), radial-gradient(2px 2px at 85% 25%, #fff 100%, transparent);
+  opacity: 0.25;
+  transition: 0.5s;
+}
+
+.cosmic-toggle .toggle-orb {
+  position: absolute;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  left: 3px;
+  bottom: 3px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ff6b6b, #4ecdc4);
+  transition: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.cosmic-toggle .inner-orb {
+  position: absolute;
+  inset: 4px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #fff, #e6e6e6);
+}
+
+.cosmic-toggle .inner-orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(transparent 0deg, rgba(0, 0, 0, 0.1) 10deg, transparent 20deg);
+  animation: patternRotate 10s linear infinite;
+}
+
+.cosmic-toggle .ring {
+  position: absolute;
+  inset: -2px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+.cosmic-toggle .energy-line,
+.cosmic-toggle .particles {
+  position: absolute;
+  pointer-events: none;
+}
+
+.cosmic-toggle .energy-line {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.6), transparent);
+  opacity: 0;
+}
+
+.cosmic-toggle .energy-line:nth-child(1) { top: 20%; transform: rotate(15deg); }
+.cosmic-toggle .energy-line:nth-child(2) { top: 50%; }
+.cosmic-toggle .energy-line:nth-child(3) { top: 80%; transform: rotate(-15deg); }
+.cosmic-toggle .particles { inset: 0; }
+.cosmic-toggle .particle { position: absolute; width: 3px; height: 3px; background: #4ecdc4; border-radius: 50%; opacity: 0; }
+.cosmic-toggle .particle:nth-child(1) { left: 20%; }
+.cosmic-toggle .particle:nth-child(2) { left: 40%; }
+.cosmic-toggle .particle:nth-child(3) { left: 60%; }
+.cosmic-toggle .particle:nth-child(4) { left: 80%; }
+.cosmic-toggle .particle:nth-child(5) { left: 30%; }
+.cosmic-toggle .particle:nth-child(6) { left: 70%; }
+.cosmic-toggle .toggle:checked + .slider .toggle-orb { transform: translateX(42px) rotate(360deg); background: linear-gradient(145deg, #4ecdc4, #45b7af); }
+.cosmic-toggle .toggle:checked + .slider .inner-orb { background: linear-gradient(145deg, #45b7af, #3da89f); transform: scale(0.9); }
+.cosmic-toggle .toggle:checked + .slider .energy-line { opacity: 1; animation: energyFlow 2s linear infinite; }
+.cosmic-toggle:hover .slider { transform: rotateX(7deg) rotateY(7deg); }
+.cosmic-toggle:hover .toggle-orb { filter: brightness(1.15); box-shadow: 0 0 16px rgba(78, 205, 196, 0.5); }
+
+@keyframes patternRotate { to { transform: rotate(360deg); } }
+@keyframes energyFlow { 0% { transform: scaleX(0); opacity: 0; } 50% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(0); opacity: 0; } }
+
 @media (max-width: 900px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -546,6 +679,16 @@ h2 {
 
   .content {
     padding-top: 0;
+  }
+
+  .content-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .content-actions {
+    width: 100%;
+    flex-wrap: wrap;
   }
 
   .audio-panel {
