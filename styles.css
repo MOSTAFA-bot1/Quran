@@ -376,12 +376,28 @@ h2 {
 }
 
 .ghost-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 10px 14px;
-  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(9, 9, 11);
+  border: 1.58px solid rgb(82, 82, 91);
+  color: rgb(226, 232, 240);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  transition: all 300ms ease;
+}
+
+.ghost-btn:hover {
+  transform: translateY(-0.335rem);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.ghost-btn:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
 }
 
 .loader {
