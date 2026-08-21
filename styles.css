@@ -55,7 +55,12 @@ input {
   color: var(--accent-2);
   margin: 0 0 4px;
 }
-
+.eyebrow a {
+  color: var(--accent-2);
+  text-decoration: none;
+  text-decoration-color: var(--accent-2);
+  width: 100px;
+}
 h1,
 h2 {
   margin: 0;
