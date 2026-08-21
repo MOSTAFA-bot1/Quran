@@ -24,6 +24,7 @@ const progressBar = document.getElementById('progressBar');
 const currentTimeEl = document.getElementById('currentTime');
 const durationEl = document.getElementById('duration');
 const reciterBtns = document.querySelectorAll('.reciter-btn');
+const volumeLevel = document.getElementById('volumeLevel');
 
 let repeatEnabled = false;
 let autoplayPending = false;
@@ -252,6 +253,10 @@ progressBar.addEventListener('input', () => {
   if (audioPlayer.duration) {
     audioPlayer.currentTime = (Number(progressBar.value) / 100) * audioPlayer.duration;
   }
+});
+
+volumeLevel.addEventListener('input', () => {
+  audioPlayer.volume = Number(volumeLevel.value);
 });
 
 audioPlayer.addEventListener('loadedmetadata', () => {
