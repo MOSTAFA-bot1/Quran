@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تسميع القران</title>
+    <meta name="description" content="Practice Quran memorization with microphone recording. Verses appear as you recite." />
+    <meta name="keywords" content="قرآن, تلاوة, حفظ, تسجيل, ممارسة" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="practice.css" />
+    <link rel="icon" type="image/x-icon" href="https://i1.sndcdn.com/avatars-fheFiXbBUakGm6ne-YJQq2w-t240x240.jpg" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div>
+            <p class="eyebrow">Practice Mode</p>
+            <h1>Quran Practice قران</h1>
+            <p class="subtitle">Record and improve your recitation.</p>
+          </div>
+          <div class="navigation">
+            <a href="index.html" class="nav-link">← Back to Reader</a>
+          </div>
+        </div>
+        
+        <div class="practice-settings">
+          <h3>Settings</h3>
+          <div class="setting-group">
+            <label for="surahSelect">Select Surah</label>
+            <select id="surahSelect" class="styled-select">
+              <option value="">Loading surahs...</option>
+            </select>
+          </div>
+          
+          <div class="setting-group">
+            <label for="difficultyLevel">Difficulty</label>
+            <select id="difficultyLevel" class="styled-select">
+              <option value="easy">Easy - Slow pace</option>
+              <option value="medium" selected>Medium - Normal pace</option>
+              <option value="hard">Hard - Fast pace</option>
+            </select>
+          </div>
+          
+          <div class="setting-group">
+            <label class="toggle-label">
+              <input type="checkbox" id="autoRevealToggle" checked>
+              <span>Auto-reveal verse on speech</span>
+            </label>
+          </div>
+          
+          <div class="setting-group">
+            <label class="toggle-label">
+              <input type="checkbox" id="autoNextToggle" checked>
+              <span>Auto-next verse after silence</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="progress-stats">
+          <h3>Your Progress</h3>
+          <div class="stat-item">
+            <span class="stat-label">Sessions Today</span>
+            <span class="stat-value" id="sessionsToday">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total Recordings</span>
+            <span class="stat-value" id="totalRecordings">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Verses Practiced</span>
+            <span class="stat-value" id="versesPracticed">0</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="content-header">
+          <div>
+            <p class="badge">Practice Mode</p>
+            <h2>Recitation & Memorization Practice</h2>
+            <p class="meta">Practice memorization - all verses included</p>
+          </div>
+          <div class="content-actions">
+            <label class="cosmic-toggle" title="Toggle light and dark mode">
+              <input id="themeToggle" class="toggle" type="checkbox" aria-label="Use light mode" />
+              <div class="slider">
+                <div class="cosmos"></div>
+                <div class="energy-line"></div>
+                <div class="energy-line"></div>
+                <div class="energy-line"></div>
+                <div class="toggle-orb">
+                  <div class="inner-orb"></div>
+                  <div class="ring"></div>
+                </div>
+                <div class="particles">
+                  <div style="--angle: 30deg" class="particle"></div>
+                  <div style="--angle: 60deg" class="particle"></div>
+                  <div style="--angle: 90deg" class="particle"></div>
+                  <div style="--angle: 120deg" class="particle"></div>
+                  <div style="--angle: 150deg" class="particle"></div>
+                  <div style="--angle: 180deg" class="particle"></div>
+                </div>
+              </div>
+            </label>
+          </div>
+        </header>
+
+        <section class="practice-area">
+          <div class="memorization-section">
+            <h3>Memorization Practice</h3>
+            <div class="memorization-content">
+              <div class="verse-container" id="verseContainer">
+                <div class="verse-hint" id="verseHint">
+                  <p>Select a surah and start recording to practice memorization</p>
+                  <p class="hint-text">The verse will appear as you recite</p>
+                </div>
+                <div class="verse-display hidden" id="verseDisplay">
+                  <p id="verseText"></p>
+                </div>
+              </div>
+              <div class="verse-controls">
+                <button id="revealBtn" class="reveal-button" type="button" aria-label="Reveal verse" disabled>
+                  👁 Reveal Verse
+                </button>
+                <button id="nextVerseBtn" class="next-verse-button" type="button" aria-label="Next verse" disabled>
+                  Next Verse →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="recording-section">
+            <h3>Your Recording</h3>
+            <div class="recording-interface">
+              <div class="visualizer-container">
+                <canvas id="audioVisualizer" width="600" height="150"></canvas>
+                <div class="recording-indicator" id="recordingIndicator">
+                  <div class="recording-dot"></div>
+                  <span>Recording</span>
+                </div>
+              </div>
+              
+              <div class="recording-controls">
+                <button id="recordBtn" class="record-button" type="button" aria-label="Start recording">
+                  <span class="record-icon">●</span>
+                  <span class="record-text">Record</span>
+                </button>
+                <button id="stopBtn" class="stop-button" type="button" aria-label="Stop recording" disabled>
+                  <span class="stop-icon">■</span>
+                  <span class="stop-text">Stop</span>
+                </button>
+                <button id="playRecordingBtn" class="play-button small" type="button" aria-label="Play your recording" disabled>
+                  ▶ Play
+                </button>
+                <button id="compareBtn" class="compare-button" type="button" aria-label="Save recording" disabled>
+                  💾 Save Recording
+                </button>
+              </div>
+              
+              <div class="recording-timer">
+                <span id="recordingTime">0:00</span>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="recordings-history">
+            <h3>Recent Recordings</h3>
+            <div class="history-list" id="historyList">
+              <div class="empty-state">No recordings yet. Start practicing!</div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="practice.js"></script>
+  </body>
+</html>
