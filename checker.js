@@ -5,6 +5,7 @@
 
   const DIACRITICS = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08F0-\u08FF]/g;
   const TATWEEL = /\u0640/g;
+  const ZERO_WIDTH = /[\u200B-\u200F\u061C\uFEFF]/g;
   const NON_ARABIC = /[^\u0621-\u064A\s]/g;
 
   function normalizeArabic(text) {
@@ -12,11 +13,12 @@
     return text
       .replace(DIACRITICS, '')
       .replace(TATWEEL, '')
-      .replace(/[\u0622\u0623\u0625\u0627\u0671]/g, '\u0627')
-      .replace(/\u0649/g, '\u064A')
-      .replace(/\u0624/g, '\u0648')
-      .replace(/\u0626/g, '\u064A')
-      .replace(/\u0629/g, '\u0647')
+      .replace(ZERO_WIDTH, '')
+      .replace(/[\u0622\u0623\u0625\u0627\u0671\u0672\u0673\u0675]/g, '\u0627')
+      .replace(/[\u0649\u0626\u06CC\u06D2\u064A]/g, '\u064A')
+      .replace(/[\u0624\u06C4\u06C5\u06C6\u06C7\u0648]/g, '\u0648')
+      .replace(/[\u0629\u06BE\u06C1\u06C2\u06D5]/g, '\u0647')
+      .replace(/[\u06A9\u06AA]/g, '\u0643')
       .replace(NON_ARABIC, ' ')
       .replace(/\s+/g, ' ')
       .trim();
