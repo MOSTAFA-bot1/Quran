@@ -3,7 +3,8 @@
 (function (global) {
   'use strict';
 
-  const DIACRITICS = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08F0-\u08FF]/g;
+  const DIACRITICS = /[\u0610-\u061A\u064B-\u065F\u06D6-\u06ED\u08F0-\u08FF]/g;
+  const DAGGER_ALEF = /\u0670/g;
   const TATWEEL = /\u0640/g;
   const ZERO_WIDTH = /[\u200B-\u200F\u061C\uFEFF]/g;
   const NON_ARABIC = /[^\u0621-\u064A\s]/g;
@@ -14,6 +15,7 @@
       .replace(DIACRITICS, '')
       .replace(TATWEEL, '')
       .replace(ZERO_WIDTH, '')
+      .replace(DAGGER_ALEF, '\u0627')
       .replace(/[\u0622\u0623\u0625\u0627\u0671\u0672\u0673\u0675]/g, '\u0627')
       .replace(/[\u0649\u0626\u06CC\u06D2\u064A]/g, '\u064A')
       .replace(/[\u0624\u06C4\u06C5\u06C6\u06C7\u0648]/g, '\u0648')
@@ -22,6 +24,17 @@
       .replace(NON_ARABIC, ' ')
       .replace(/\s+/g, ' ')
       .trim();
+  }
+
+  // Mushaf spelling omits some alefs that ordinary spelling writes (العلمين /
+  // العالمين), so words are matched on an alef-insensitive key.
+  function comparisonKey(word) {
+    if (word.length < 2) return word;
+    return word[0] + word.slice(1).replace(/\u0627/g, '');
+  }
+
+  function sameWord(a, b) {
+    return a === b || comparisonKey(a) === comparisonKey(b);
   }
 
   function tokenize(text) {
@@ -68,7 +81,7 @@
 
     for (let i = 1; i < rows; i++) {
       for (let j = 1; j < cols; j++) {
-        const substitution = cost[i - 1][j - 1] + (expected[i - 1] === actual[j - 1] ? 0 : 1);
+        const substitution = cost[i - 1][j - 1] + (sameWord(expected[i - 1], actual[j - 1]) ? 0 : 1);
         cost[i][j] = Math.min(substitution, cost[i - 1][j] + 1, cost[i][j - 1] + 1);
       }
     }
@@ -77,9 +90,9 @@
     let i = expected.length;
     let j = actual.length;
     while (i > 0 || j > 0) {
-      if (i > 0 && j > 0 && cost[i][j] === cost[i - 1][j - 1] + (expected[i - 1] === actual[j - 1] ? 0 : 1)) {
+      if (i > 0 && j > 0 && cost[i][j] === cost[i - 1][j - 1] + (sameWord(expected[i - 1], actual[j - 1]) ? 0 : 1)) {
         ops.push(
-          expected[i - 1] === actual[j - 1]
+          sameWord(expected[i - 1], actual[j - 1])
             ? { type: 'correct', expected: expected[i - 1], actual: actual[j - 1] }
             : { type: 'wrong', expected: expected[i - 1], actual: actual[j - 1] }
         );
@@ -191,7 +204,7 @@
     };
   }
 
-  global.QuranChecker = { normalizeArabic, tokenize, similarity, alignWords, checkVerse };
+  global.QuranChecker = { normalizeArabic, tokenize, similarity, sameWord, alignWords, checkVerse };
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = global.QuranChecker;
