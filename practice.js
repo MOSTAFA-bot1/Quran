@@ -20,7 +20,9 @@ const state = {
   silenceStartTime: null,
   autoRevealEnabled: true,
   autoNextEnabled: true,
-  silenceThreshold: 2000 // 2 seconds of silence before auto-next
+  silenceThreshold: 2000, // 2 seconds of silence before auto-next
+  speechRecognition: null,
+  isListening: false
 };
 
 // DOM Elements
@@ -46,6 +48,14 @@ const historyList = document.getElementById('historyList');
 const sessionsToday = document.getElementById('sessionsToday');
 const totalRecordings = document.getElementById('totalRecordings');
 const versesPracticed = document.getElementById('versesPracticed');
+const checkerInput = document.getElementById('checkerInput');
+const listenBtn = document.getElementById('listenBtn');
+const checkBtn = document.getElementById('checkBtn');
+const clearCheckBtn = document.getElementById('clearCheckBtn');
+const checkerResult = document.getElementById('checkerResult');
+const checkerVerdict = document.getElementById('checkerVerdict');
+const checkerDiff = document.getElementById('checkerDiff');
+const checkerMistakes = document.getElementById('checkerMistakes');
 
 // Theme Management
 function applyTheme(isLight) {
@@ -176,6 +186,7 @@ function loadVersesForPractice() {
   verseDisplay.classList.add('hidden');
   revealBtn.disabled = true;
   nextVerseBtn.disabled = true;
+  resetChecker();
 }
 
 function updateVerseDisplay() {
@@ -195,10 +206,19 @@ function revealVerse() {
   nextVerseBtn.disabled = false;
 }
 
+function resetChecker() {
+  if (!checkerInput) return;
+  checkerInput.value = '';
+  checkerResult.classList.add('hidden');
+  checkerDiff.innerHTML = '';
+  checkerMistakes.innerHTML = '';
+}
+
 function nextVerse() {
   if (state.currentVerseIndex < state.verses.length - 1) {
     state.currentVerseIndex++;
     state.verseRevealed = false;
+    resetChecker();
     
     // Reset display for next verse
     verseDisplay.classList.add('hidden');
@@ -528,6 +548,140 @@ window.deleteHistoryRecording = function(id) {
   updateHistoryDisplay();
   updateStats();
 };
+
+// Verse Checker
+function currentVerse() {
+  if (state.verses.length === 0 || state.currentVerseIndex >= state.verses.length) return null;
+  return state.verses[state.currentVerseIndex];
+}
+
+function renderCheckerDiff(ops) {
+  checkerDiff.innerHTML = '';
+  ops.forEach(op => {
+    const span = document.createElement('span');
+    span.className = `diff-word diff-${op.type}`;
+    if (op.type === 'extra') {
+      span.textContent = op.actual;
+      span.title = 'Extra word — كلمة زائدة';
+    } else {
+      span.textContent = op.expected;
+      if (op.type === 'wrong') span.title = `You said: ${op.actual}`;
+      if (op.type === 'missing') span.title = 'Missing word — كلمة ناقصة';
+    }
+    checkerDiff.appendChild(span);
+  });
+}
+
+function renderCheckerMistakes(mistakes) {
+  checkerMistakes.innerHTML = '';
+  mistakes.forEach(mistake => {
+    const item = document.createElement('li');
+    item.className = `mistake mistake-${mistake.type}`;
+    const arabic = document.createElement('span');
+    arabic.className = 'mistake-ar';
+    arabic.dir = 'rtl';
+    arabic.textContent = mistake.ar;
+    const english = document.createElement('span');
+    english.className = 'mistake-en';
+    english.textContent = mistake.en;
+    item.append(arabic, english);
+    checkerMistakes.appendChild(item);
+  });
+}
+
+function checkRecitation() {
+  const verse = currentVerse();
+  checkerResult.classList.remove('hidden');
+
+  if (!verse) {
+    checkerVerdict.className = 'checker-verdict verdict-unknown';
+    checkerVerdict.textContent = 'Select a surah first — اختر سورة أولاً';
+    checkerDiff.innerHTML = '';
+    checkerMistakes.innerHTML = '';
+    return;
+  }
+
+  const result = QuranChecker.checkVerse(verse.text, checkerInput.value);
+  checkerVerdict.className = `checker-verdict verdict-${result.status}`;
+  checkerVerdict.textContent = `${result.ar} — ${result.en}`;
+  renderCheckerDiff(result.ops);
+  renderCheckerMistakes(result.mistakes);
+
+  if (!state.verseRevealed) revealVerse();
+}
+
+function createSpeechRecognition() {
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!Recognition) return null;
+
+  const recognition = new Recognition();
+  recognition.lang = 'ar-SA';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  let finalTranscript = '';
+
+  recognition.onresult = event => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += `${transcript} `;
+      } else {
+        interim += transcript;
+      }
+    }
+    checkerInput.value = `${finalTranscript}${interim}`.trim();
+  };
+
+  recognition.onstart = () => {
+    finalTranscript = '';
+    state.isListening = true;
+    listenBtn.classList.add('listening');
+    listenBtn.textContent = '■ Stop';
+  };
+
+  recognition.onerror = event => {
+    console.error('Speech recognition error:', event.error);
+  };
+
+  recognition.onend = () => {
+    state.isListening = false;
+    listenBtn.classList.remove('listening');
+    listenBtn.textContent = '🎙 Recite';
+    if (checkerInput.value.trim()) checkRecitation();
+  };
+
+  return recognition;
+}
+
+function toggleListening() {
+  if (!state.speechRecognition) {
+    state.speechRecognition = createSpeechRecognition();
+  }
+  if (!state.speechRecognition) {
+    checkerResult.classList.remove('hidden');
+    checkerVerdict.className = 'checker-verdict verdict-unknown';
+    checkerVerdict.textContent =
+      'Speech recognition is not supported in this browser — type your recitation instead.';
+    return;
+  }
+
+  if (state.isListening) {
+    state.speechRecognition.stop();
+  } else {
+    state.speechRecognition.start();
+  }
+}
+
+listenBtn.addEventListener('click', toggleListening);
+checkBtn.addEventListener('click', checkRecitation);
+clearCheckBtn.addEventListener('click', () => {
+  checkerInput.value = '';
+  checkerResult.classList.add('hidden');
+  checkerDiff.innerHTML = '';
+  checkerMistakes.innerHTML = '';
+});
 
 // Event Listeners
 surahSelect.addEventListener('change', loadVerses);

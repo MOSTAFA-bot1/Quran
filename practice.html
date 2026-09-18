@@ -130,6 +130,37 @@
             </div>
           </div>
 
+          <div class="checker-section" id="checkerSection">
+            <h3>Verse Checker — تصحيح التلاوة</h3>
+            <p class="checker-help">
+              Recite with the microphone or type what you recited, then check it against the current verse.
+              Wrong, missing and extra words are listed below.
+            </p>
+            <textarea
+              id="checkerInput"
+              class="checker-input"
+              dir="rtl"
+              rows="3"
+              placeholder="اكتب أو سمّع ما قرأته هنا"
+            ></textarea>
+            <div class="checker-controls">
+              <button id="listenBtn" class="listen-button" type="button" aria-label="Recite and transcribe">
+                🎙 Recite
+              </button>
+              <button id="checkBtn" class="check-button" type="button" aria-label="Check verse">
+                ✓ Check Verse
+              </button>
+              <button id="clearCheckBtn" class="clear-check-button" type="button" aria-label="Clear">
+                Clear
+              </button>
+            </div>
+            <div class="checker-result hidden" id="checkerResult">
+              <div class="checker-verdict" id="checkerVerdict"></div>
+              <div class="checker-diff" id="checkerDiff" dir="rtl"></div>
+              <ul class="checker-mistakes" id="checkerMistakes"></ul>
+            </div>
+          </div>
+
           <div class="recording-section">
             <h3>Your Recording</h3>
             <div class="recording-interface">
@@ -176,6 +207,7 @@
       </main>
     </div>
 
+    <script src="checker.js"></script>
     <script src="practice.js"></script>
   </body>
 </html>
